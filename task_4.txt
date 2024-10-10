@@ -1,0 +1,46 @@
+Task 4: 
+
+function processData():
+    // Lấy dữ liệu từ API
+    inputData = GET 'https://test-share.shub.edu.vn/api/intern-test/input'
+    token = inputData.token
+    data = inputData.data
+    queryList = inputData.query
+
+    n = length of data
+    
+    // Tạo mảng prefixSum để lưu tổng các phần tử từ đầu đến vị trí i
+    prefixSum = new array of size (n + 1) filled with 0
+    for i from 0 to n - 1:
+        prefixSum[i + 1] = prefixSum[i] + data[i]
+
+    // Tạo mảng prefixOddEven để lưu tổng chẵn-lẻ từ đầu đến vị trí i
+    prefixOddEven = new array of size (n + 1) filled with 0
+    for i from 0 to n - 1:
+        if i is even:
+            prefixOddEven[i + 1] = prefixOddEven[i] + data[i]
+        else:
+            prefixOddEven[i + 1] = prefixOddEven[i] - data[i]
+
+    // Tạo mảng lưu kết quả của các truy vấn
+    result = []
+
+    // Xử lý từng truy vấn
+    for each query in queryList:
+        l = query.range[0]
+        r = query.range[1]
+        if query.type == "1":
+            // Loại 1: Tính tổng trong khoảng [l, r]
+            sumRange = prefixSum[r + 1] - prefixSum[l]
+            append sumRange to result
+        else if query.type == "2":
+            // Loại 2: Tính tổng chẵn-lẻ trong khoảng [l, r]
+            sumOddEven = prefixOddEven[r + 1] - prefixOddEven[l]
+            append sumOddEven to result
+
+    // Gửi kết quả đến API output với Bearer token
+    POST 'https://test-share.shub.edu.vn/api/intern-test/output'
+    with body { "result": result }
+    and header { "Authorization": "Bearer " + token }
+
+    print "Kết quả đã được gửi thành công!"
